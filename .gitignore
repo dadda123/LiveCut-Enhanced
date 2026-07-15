@@ -1,0 +1,15 @@
+# build output
+build/
+
+# cloned dependencies (see README for how to fetch)
+vendor/
+third_party/
+
+# IDE / tooling
+.vs/
+.idea/
+*.user
+.claude/
+
+# personal notes / product-page drafts
+description.md
