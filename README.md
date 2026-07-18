@@ -15,7 +15,7 @@ over any control for an explanation of what the parameter does.
 
 ## Formats
 
-- VST3 (x64, Windows)
+- VST3 (Windows x64, macOS universal: arm64 + x86_64)
 - Standalone app (for quick testing)
 
 ## Structure
@@ -31,10 +31,18 @@ over any control for an explanation of what the parameter does.
 
 ## Building
 
+JUCE is not tracked in this repo, so clone it into `vendor/JUCE` first (same
+step on every platform):
+
+```sh
+git clone --depth 1 --branch 8.0.10 https://github.com/juce-framework/JUCE.git vendor/JUCE
+```
+
+### Windows
+
 Requires Visual Studio 2026 (or 2022) with the C++ workload and CMake 3.22+.
 
 ```powershell
-git clone --depth 1 --branch 8.0.10 https://github.com/juce-framework/JUCE.git vendor/JUCE
 cmake -S . -B build -G "Visual Studio 18 2026" -A x64
 cmake --build build --config Release
 ```
@@ -44,9 +52,35 @@ Artifacts end up in `build/LiveCutVariant_artefacts/Release/`:
 - `VST3/LiveCut Enhanced.vst3` - copy to `C:\Program Files\Common Files\VST3\`
 - `Standalone/LiveCut Enhanced.exe`
 
+### macOS
+
+Requires the Xcode Command Line Tools (`xcode-select --install`) and CMake
+3.22+. Full Xcode is only needed if you also want the Audio Unit (AU) format.
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release -j$(sysctl -n hw.ncpu)
+```
+
+Building on an Apple Silicon Mac produces a native arm64 binary; building on an
+Intel Mac produces x86_64. To produce a single universal binary that runs
+natively on both (no Rosetta), add the architectures flag when configuring:
+
+```sh
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+cmake --build build --config Release -j$(sysctl -n hw.ncpu)
+```
+
+Artifacts end up in `build/LiveCutVariant_artefacts/Release/`:
+
+- `VST3/LiveCut Enhanced.vst3` - copy to `~/Library/Audio/Plug-Ins/VST3/`
+- `Standalone/LiveCut Enhanced.app`
+
+Verify the built architectures with `lipo -info "build/LiveCutVariant_artefacts/Release/VST3/LiveCut Enhanced.vst3/Contents/MacOS/LiveCut Enhanced"`.
+
 ## Testing
 
-```powershell
+```sh
 ctest --test-dir build -C Release
 ```
 
