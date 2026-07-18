@@ -13,3 +13,6 @@ third_party/
 
 # personal notes / product-page drafts
 description.md
+
+.DS_Store
+**/.DS_Store
