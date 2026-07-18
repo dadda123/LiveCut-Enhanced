@@ -185,16 +185,52 @@ LiveCutEditor::LiveCutEditor (LiveCutAudioProcessor& p)
 
     setHints();
     updateProcVisibility();
-    startTimerHz (30);
 
     setResizable (true, true);
     setResizeLimits (820, 540, 1680, 1100);
     setSize (1020, 640);
+
+    startTimerHz (30);
 }
 
 LiveCutEditor::~LiveCutEditor()
 {
     setLookAndFeel (nullptr);
+}
+
+#if JUCE_MAC
+namespace
+{
+    // Some macOS hosts don't repaint the native peer on first show, leaving
+    // the editor black until the user manually resizes the window.
+    void forceRelayoutAndRepaint (juce::Component& c)
+    {
+        c.resized();
+        c.repaint();
+        if (auto* peer = c.getPeer())
+            peer->repaint (c.getLocalBounds());
+    }
+}
+#endif
+
+void LiveCutEditor::visibilityChanged()
+{
+#if JUCE_MAC
+    if (isVisible())
+        juce::Timer::callAfterDelay (30, [safeThis = juce::Component::SafePointer<LiveCutEditor> (this)]
+        {
+            if (safeThis != nullptr)
+                forceRelayoutAndRepaint (*safeThis);
+        });
+#endif
+}
+
+void LiveCutEditor::parentHierarchyChanged()
+{
+#if JUCE_MAC
+    if (isShowing())
+        forceRelayoutAndRepaint (*this);
+#endif
 }
 
 void LiveCutEditor::paint (juce::Graphics& g)
