@@ -33,7 +33,6 @@ public:
         viewport.setScrollBarThickness(10);
         addAndMakeVisible(viewport);
 
-        closeButton.setTooltip("Close");
         closeButton.onClick = [this]
         { dismiss(); };
         addAndMakeVisible(closeButton);
@@ -47,6 +46,11 @@ public:
     }
 
     void dismiss() { setVisible(false); }
+
+    void setHelpMode (bool enabled)
+    {
+        closeButton.setTooltip (enabled ? "Close the About panel." : juce::String());
+    }
 
     void paint(juce::Graphics &g) override
     {
@@ -136,7 +140,7 @@ private:
 
     //==========================================================================
     /** The scrollable page. Static text is painted directly (the LookAndFeel
-        pins all Label fonts to 12.5f, so Labels can't carry custom sizes);
+        pins all Label fonts to 17.0f, so Labels can't carry custom sizes);
         only the clickable links are child components. */
     class Content : public juce::Component
     {
