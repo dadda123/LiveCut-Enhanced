@@ -16,7 +16,7 @@ juce_add_plugin(LiveCutVariant
     FORMATS VST3 Standalone
     VST3_CATEGORIES Fx
     IS_SYNTH FALSE
-    NEEDS_MIDI_INPUT FALSE
+    NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT FALSE
     IS_MIDI_EFFECT FALSE
     COPY_PLUGIN_AFTER_BUILD FALSE
@@ -59,3 +59,15 @@ add_executable(KernelSilenceTest
 target_include_directories(KernelSilenceTest PRIVATE src/dsp)
 
 add_test(NAME KernelSilenceTest COMMAND KernelSilenceTest)
+
+add_executable(SubdivSmokeTest
+    tests/SubdivSmokeTest.cpp
+    src/dsp/BBCutter.cpp
+    src/dsp/BitCrusher.cpp
+    src/dsp/Comb.cpp
+    src/dsp/DelayLine.cpp
+    src/dsp/FirstOrderLowpass.cpp
+)
+target_include_directories(SubdivSmokeTest PRIVATE src/dsp)
+
+add_test(NAME SubdivSmokeTest COMMAND SubdivSmokeTest)
